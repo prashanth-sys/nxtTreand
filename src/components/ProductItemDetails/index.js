@@ -1,6 +1,7 @@
 // Write your code here
 // Write your code here
 import {Component} from 'react'
+import {BsPlusSquare, BsDashSquare} from 'react-icons/bs'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
 import Header from '../Header'
@@ -14,7 +15,12 @@ const apiStatusConstants = {
 }
 
 class ProductItemDetails extends Component {
-  state = {productData: {}, apiStatus: apiStatusConstants.initial, count: 1}
+  state = {
+    productData: {},
+    apiStatus: apiStatusConstants.initial,
+    count: 1,
+    similearProducts: [],
+  }
 
   componentDidMount() {
     this.getImageDetails()
@@ -52,6 +58,7 @@ class ProductItemDetails extends Component {
       this.setState({
         productData: updatedData,
         apiStatus: apiStatusConstants.success,
+        similearProducts: updatedData,
       })
     }
     if (response.status === 401) {
@@ -59,8 +66,19 @@ class ProductItemDetails extends Component {
     }
   }
 
+  onClickIncrement = () => {
+    this.setState(prevstate => ({count: prevstate.count + 1}))
+  }
+
+  onClickDecrement = () => {
+    const {count} = this.state
+    if (count > 1) {
+      this.setState(prevstate => ({count: prevstate.count - 1}))
+    }
+  }
+
   renderImageDetails = () => {
-    const {productData, count} = this.state
+    const {productData, count, similearProducts} = this.state
     const {
       imageURL,
       title,
@@ -69,6 +87,7 @@ class ProductItemDetails extends Component {
       totalReviews,
       availability,
       brand,
+      rating,
     } = productData
 
     return (
@@ -76,12 +95,15 @@ class ProductItemDetails extends Component {
         <Header />
         <div className="bg-container">
           <div className="image-container">
-            <img src={imageURL} alt="krishna" className="image" />
+            <img src={imageURL} alt="product" className="image" />
           </div>
           <div>
             <h1>{title}</h1>
 
             <p>Rs {price}</p>
+            <p>{rating}</p>
+            <BsPlusSquare />
+            <BsDashSquare />
             <div>
               <img
                 src="https://assets.ccbp.in/frontend/react-js/star-img.png"
@@ -92,15 +114,42 @@ class ProductItemDetails extends Component {
               <p>Available: {availability}</p>
               <p>Brand: {brand}</p>
               <div className="button-container">
-                <button type="button" className="button">
+                <button
+                  type="button"
+                  className="button"
+                  data-testid="minus"
+                  onClick={this.onClickDecrement}
+                >
                   -
                 </button>
                 <p className="count">{count}</p>
-                <button type="button" className="button">
+                <button
+                  type="button"
+                  className="button"
+                  data-testid="plus"
+                  onClick={this.onClickIncrement}
+                >
                   +
                 </button>
               </div>
+              <button type="button" className="button-to-carts">
+                ADD TO CART
+              </button>
             </div>
+          </div>
+          <div className="similar-products-container">
+            {similearProducts.map(product => (
+              <div key={product.id} className="similar-product">
+                <img
+                  src={product.image_url}
+                  alt={`similar product ${product.id}`}
+                />
+                <p>{product.title}</p>
+                <p>{product.brand}</p>
+                <p>{product.rating}</p>
+                <p>{product.price}</p>
+              </div>
+            ))}
           </div>
         </div>
       </>
@@ -110,16 +159,12 @@ class ProductItemDetails extends Component {
   renderFailureShow = () => {
     const URL =
       'https://assets.ccbp.in/frontend/react-js/nxt-trendz-error-view-img.png'
-    return (
-      <div>
-        <img src={URL} alt="shiva paravathi" />
-      </div>
-    )
+    return <img src={URL} alt="error view" />
   }
 
   renderLoaderView = () => (
-    <div className="primedeals-loader-container">
-      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+    <div data-testid="loader">
+      <Loader type="ThreeDots" color="#0b69ff" height={80} width={80} />
     </div>
   )
 
