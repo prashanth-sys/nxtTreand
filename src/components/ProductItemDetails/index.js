@@ -61,8 +61,7 @@ class ProductItemDetails extends Component {
         apiStatus: apiStatusConstants.success,
         similearProducts: data.similar_products,
       })
-    }
-    if (response.status === 401) {
+    } else {
       this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
