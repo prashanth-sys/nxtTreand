@@ -2,6 +2,7 @@
 // Write your code here
 import {Component} from 'react'
 import {BsPlusSquare, BsDashSquare} from 'react-icons/bs'
+import {Link} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
 import Header from '../Header'
@@ -58,7 +59,7 @@ class ProductItemDetails extends Component {
       this.setState({
         productData: updatedData,
         apiStatus: apiStatusConstants.success,
-        similearProducts: updatedData,
+        similearProducts: data.similar_products,
       })
     }
     if (response.status === 401) {
@@ -159,7 +160,17 @@ class ProductItemDetails extends Component {
   renderFailureShow = () => {
     const URL =
       'https://assets.ccbp.in/frontend/react-js/nxt-trendz-error-view-img.png'
-    return <img src={URL} alt="error view" />
+    return (
+      <div className="failure-view-container">
+        <img src={URL} alt="failure view" />
+        <h1>Product Not Found</h1>
+        <Link to="/products">
+          <button type="button" onClick={this.navigateToProducts}>
+            Continue Shopping
+          </button>
+        </Link>
+      </div>
+    )
   }
 
   renderLoaderView = () => (
