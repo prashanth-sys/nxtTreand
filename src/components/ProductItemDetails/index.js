@@ -28,6 +28,7 @@ class ProductItemDetails extends Component {
   }
 
   getImageDetails = async () => {
+    this.setState({apiStatus: apiStatusConstants.inProgress})
     const token = Cookies.get('jwt_token')
     const {match} = this.props
     const {params} = match
